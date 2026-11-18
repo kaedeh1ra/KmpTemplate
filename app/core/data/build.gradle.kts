@@ -24,6 +24,12 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.clientOkhttp)
         }
+        jvmMain.dependencies {
+            implementation(libs.ktor.clientOkhttp)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.clientDarwin)
+        }
         wasmJsMain.dependencies {
             implementation(libs.ktor.clientJs)
         }

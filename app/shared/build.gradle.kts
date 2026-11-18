@@ -1,4 +1,5 @@
 import com.example.app.buildlogic.Constants
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("kmp.compose")
@@ -7,7 +8,15 @@ plugins {
 }
 
 // Оболочка приложения: каркас страницы, граф навигации из плагинов фич, запуск Koin.
+// Для iOS модуль собирается во фреймворк Shared, который подключает Xcode-проект iosApp.
 kotlin {
+    targets.withType<KotlinNativeTarget>().configureEach {
+        binaries.framework {
+            baseName = "Shared"
+            isStatic = true
+        }
+    }
+
     sourceSets {
         commonMain.dependencies {
             api(project(Constants.Modules.DOMAIN))

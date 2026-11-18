@@ -7,7 +7,10 @@
   - package/import и любые упоминания com.example.app в исходниках и скриптах сборки;
   - папки com/example/app в каждом source set (src/*/kotlin, src/*/java, build-logic);
   - namespace и applicationId (берутся из Constants.BASE_PACKAGE), rootProject.name;
-  - отображаемое имя: strings.xml, <title> в index.html, Info.plist, если появится iOS;
+  - desktop: mainClass, bundleID для macOS (из Constants), packageName (= rootProject.name), заголовок окна;
+  - iOS: PRODUCT_NAME и PRODUCT_BUNDLE_IDENTIFIER в iosApp/Configuration/Config.xcconfig (в bundle id _ → -),
+    имя KmpTemplate.app в project.pbxproj и схеме, CFBundleDisplayName в Info.plist;
+  - отображаемое имя: strings.xml, <title> в index.html, заголовок окна desktop, Info.plist;
   - файлы и папки с KmpTemplate в имени.
 README.md, .github/ и сами скрипты rename не трогает.
 Отказывается работать, если проект уже переименован или в git есть незакоммиченные изменения (-Force — всё равно).
@@ -132,6 +135,20 @@ foreach ($file in $files) {
     }
 }
 Write-Host "    изменено файлов: $changed"
+
+# В bundle id iOS допустимы только буквы, цифры, точка и дефис, а в пакете Kotlin бывает подчёркивание.
+$xcconfig = Join-Path $root "iosApp/Configuration/Config.xcconfig"
+if (Test-Path -LiteralPath $xcconfig) {
+    $text = [System.IO.File]::ReadAllText($xcconfig, $utf8)
+    $lines = $text -split "`n"
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        if ($lines[$i].StartsWith("PRODUCT_BUNDLE_IDENTIFIER=")) {
+            $lines[$i] = "PRODUCT_BUNDLE_IDENTIFIER=" + $lines[$i].Substring("PRODUCT_BUNDLE_IDENTIFIER=".Length).Replace('_', '-')
+        }
+    }
+    $fixed = $lines -join "`n"
+    if ($fixed -cne $text) { [System.IO.File]::WriteAllText($xcconfig, $fixed, $utf8) }
+}
 
 # --- 2. папки пакета
 

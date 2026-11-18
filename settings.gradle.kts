@@ -37,6 +37,7 @@ rootProject.name = "KmpTemplate"
 include(":app:shared")
 include(":app:androidApp")
 include(":app:webApp")
+include(":app:desktopApp")
 include(":app:core:domain")
 include(":app:core:data")
 include(":app:core:mvi")
