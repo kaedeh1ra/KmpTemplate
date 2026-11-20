@@ -15,7 +15,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         AndroidPlatform.init(this, BuildConfig.API_BASE_URL)
         initKoin()
-        // Отступы от системных панелей делает Scaffold оболочки.
         setContent { App(rememberNavController()) }
     }
 }

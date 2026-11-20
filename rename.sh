@@ -7,8 +7,11 @@
 #   - package/import и любые упоминания com.example.app в исходниках и скриптах сборки;
 #   - папки com/example/app в каждом source set (src/*/kotlin, src/*/java, build-logic);
 #   - namespace и applicationId (берутся из Constants.BASE_PACKAGE), rootProject.name;
-#   - отображаемое имя: strings.xml, <title> в index.html, Info.plist, если появится iOS;
-#   - файлы и папки с KmpTemplate в имени (например, iosApp/KmpTemplate.xcodeproj).
+#   - desktop: mainClass, bundleID для macOS (из Constants), packageName (= rootProject.name), заголовок окна;
+#   - iOS: PRODUCT_NAME и PRODUCT_BUNDLE_IDENTIFIER в iosApp/Configuration/Config.xcconfig (в bundle id _ → -),
+#     имя KmpTemplate.app в project.pbxproj и схеме, CFBundleDisplayName в Info.plist;
+#   - отображаемое имя: strings.xml, <title> в index.html, заголовок окна desktop, Info.plist;
+#   - файлы и папки с KmpTemplate в имени.
 # README.md, .github/ и сами скрипты rename не трогает.
 #
 # Отказывается работать, если проект уже переименован или в git есть незакоммиченные изменения (--force — всё равно).
@@ -106,6 +109,12 @@ done < <(find . \( "${PRUNE[@]}" \) -prune -o -type f \( \
     -o -name '*.xcconfig' -o -name '*.xcscheme' -o -name '*.entitlements' -o -name '*.txt' \
     \) -not -path './README.md' -not -name 'rename.sh' -not -name 'rename.ps1' -print0)
 echo "    изменено файлов: $changed"
+
+# В bundle id iOS допустимы только буквы, цифры, точка и дефис, а в пакете Kotlin бывает подчёркивание.
+XCCONFIG="iosApp/Configuration/Config.xcconfig"
+if [ -f "$XCCONFIG" ]; then
+    perl -pi -e 's/^(PRODUCT_BUNDLE_IDENTIFIER=)(.*)$/$1 . ($2 =~ tr{_}{-}r)/e' "$XCCONFIG"
+fi
 
 # --- 2. папки пакета
 

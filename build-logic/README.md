@@ -6,7 +6,7 @@
 | Плагин                 | Где применяется                                              | Что делает                                                                                                                |
 |------------------------|--------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
 | `kmp.settings`         | `settings.gradle.kts`                                        | Подключает каждую папку `app/feature/<имя>` со своим `build.gradle.kts` как модуль `:app:feature:<имя>`                   |
-| `kmp.library`          | `core/domain`, `core/data`, `core/testing`                   | Kotlin Multiplatform под Android и Wasm, namespace из пути модуля, тесты на JVM (`testAndroidHostTest`)                   |
+| `kmp.library`          | `core/domain`, `core/data`, `core/testing`                   | Таргеты Android, iOS, JVM (desktop) и Wasm, namespace из пути модуля, тесты `testAndroidHostTest` и `jvmTest`|
 | `kmp.compose`          | `core/designsystem`, `core/mvi`, `core/navigation`, `shared` | То же плюс Compose Multiplatform и lifecycle                                                                              |
 | `kmp.feature`          | `app/feature/*`                                              | Compose-модуль с зависимостями на core-модули, навигацию и Koin; в тестах — фейки из `core/testing`                       |
 | `kmp.feature.registry` | `shared`                                                     | Зависимость на каждую фичу и задача `generateFeatureRegistry`: генерирует `featureModules` — список Koin-модулей всех фич |

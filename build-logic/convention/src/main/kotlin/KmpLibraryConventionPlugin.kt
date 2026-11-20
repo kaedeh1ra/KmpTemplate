@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-/** Любой модуль фронта: Kotlin Multiplatform под Android и браузер (Wasm), тесты на JVM через Android host test. */
+/**
+ * Любой модуль приложения: Kotlin Multiplatform под Android, iOS, desktop (JVM) и браузер (Wasm).
+ * Тесты на JVM: `testAndroidHostTest` и `jvmTest`. iOS-таргеты собираются только на macOS, на других ОС Gradle их пропускает.
+ */
 class KmpLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         pluginManager.apply("org.jetbrains.kotlin.multiplatform")
@@ -26,6 +29,15 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 compilerOptions { jvmTarget.set(JvmTarget.fromTarget(Constants.JVM_TARGET)) }
                 withHostTest {}
             }
+
+            // Desktop: Windows, Linux и macOS через Compose for Desktop.
+            jvm {
+                compilerOptions { jvmTarget.set(JvmTarget.fromTarget(Constants.JVM_TARGET)) }
+            }
+
+            // Устройство (arm64) и симулятор на Apple Silicon. Симулятор на Intel-маках (iosX64) не включён.
+            iosArm64()
+            iosSimulatorArm64()
 
             @OptIn(ExperimentalWasmDsl::class)
             wasmJs {
